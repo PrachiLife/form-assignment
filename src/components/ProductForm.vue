@@ -46,34 +46,31 @@ const props = defineProps({
 const store = useProductFormStore();
 const { formValues } = storeToRefs(store);
 
-
 const errors = ref({});
 
-const initFunction=()=>{
+const initFunction = () => {
   Object.entries(props.schema).forEach(([key, field]) => {
-    if (!formValues.value[key]) {
-      if (field.type === "group") {
-        formValues.value[key] = {};
-        Object.keys(field.fields).forEach((sub) => {
-          formValues.value[key][sub] = "";
-        });
-      } else if (
-        field.type === "checkbox-group" ||
-        field.type === "dynamic-list" ||
-        field.type === "images" ||
-        field.type === "tags"
-      ) {
-        formValues.value[key] = [];
-      } else {
-        formValues.value[key] = "";
-      }
+    if (field.type === "group") {
+      formValues.value[key] = {};
+      Object.keys(field.fields).forEach((sub) => {
+        formValues.value[key][sub] = "";
+      });
+    } else if (
+      field.type === "checkbox-group" ||
+      field.type === "dynamic-list" ||
+      field.type === "images" ||
+      field.type === "tags"
+    ) {
+      formValues.value[key] = [];
+    } else {
+      formValues.value[key] = "";
     }
   });
-  console.log('init function')
-}
+  formValues.value.productId = `PID-${Date.now().toString().slice(-6)}`;
+  console.log("init function");
+};
 
-initFunction()
-
+initFunction();
 
 watch(
   () => formValues.value.publicationStatus,
@@ -208,14 +205,16 @@ function submitForm() {
   if (!formValues.value?.productTags?.length) {
     errors.value.productTags = "Please select at least one Tags ";
   }
-  if(!formValues.value?.shippingOptions?.length){
-    errors.value.shippingOptions="Please select at least one shipping options"
+  if (!formValues.value?.shippingOptions?.length) {
+    errors.value.shippingOptions =
+      "Please select at least one shipping options";
+  }
+  if(!formValues.value?.productFeatures?.length){
+    errors.value.productFeatures="Please add at least one features";
   }
   if (Object.keys(errors.value).length === 0) {
-    console.log(
-      "Submitted:",
-      formValues.value
-    );
+    let result={...formValues.value};
+    console.log("Submitted:", result);
     initFunction();
   }
 }
