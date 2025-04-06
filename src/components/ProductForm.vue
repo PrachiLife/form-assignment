@@ -49,26 +49,30 @@ const { formValues } = storeToRefs(store);
 
 const errors = ref({});
 
-
-Object.entries(props.schema).forEach(([key, field]) => {
-  if (!formValues.value[key]) {
-    if (field.type === "group") {
-      formValues.value[key] = {};
-      Object.keys(field.fields).forEach((sub) => {
-        formValues.value[key][sub] = "";
-      });
-    } else if (
-      field.type === "checkbox-group" ||
-      field.type === "dynamic-list" ||
-      field.type === "images" ||
-      field.type === "tags"
-    ) {
-      formValues.value[key] = [];
-    } else {
-      formValues.value[key] = "";
+const initFunction=()=>{
+  Object.entries(props.schema).forEach(([key, field]) => {
+    if (!formValues.value[key]) {
+      if (field.type === "group") {
+        formValues.value[key] = {};
+        Object.keys(field.fields).forEach((sub) => {
+          formValues.value[key][sub] = "";
+        });
+      } else if (
+        field.type === "checkbox-group" ||
+        field.type === "dynamic-list" ||
+        field.type === "images" ||
+        field.type === "tags"
+      ) {
+        formValues.value[key] = [];
+      } else {
+        formValues.value[key] = "";
+      }
     }
-  }
-});
+  });
+  console.log('init function')
+}
+
+initFunction()
 
 
 watch(
@@ -178,7 +182,7 @@ const visibleFields = computed(() => {
 function submitForm() {
   errors.value = {};
 
-  if (formValues.value.shortDescription.length > 10) {
+  if (formValues.value?.shortDescription?.length > 150) {
     errors.value.shortDescription = "Must be 150 characters or less";
   }
   if (
@@ -189,22 +193,22 @@ function submitForm() {
     errors.value.price = "Price must be a non-negative integer";
   }
   if (
-    !formValues.value.availableColors.length &&
+    !formValues.value?.availableColors?.length &&
     (formValues.value.productCategory == "Electronics" ||
       formValues.value.productCategory == "Clothing")
   ) {
     errors.value.availableColors = "Please select at least one color";
   }
   if (
-    !formValues.value.availableSizes.length &&
+    !formValues.value?.availableSizes?.length &&
     formValues.value.productCategory == "Clothing"
   ) {
     errors.value.availableSizes = "Please select at least one size";
   }
-  if (!formValues.value.productTags.length) {
+  if (!formValues.value?.productTags?.length) {
     errors.value.productTags = "Please select at least one Tags ";
   }
-  if(!formValues.value.shippingOptions.length){
+  if(!formValues.value?.shippingOptions?.length){
     errors.value.shippingOptions="Please select at least one shipping options"
   }
   if (Object.keys(errors.value).length === 0) {
@@ -212,6 +216,7 @@ function submitForm() {
       "Submitted:",
       formValues.value
     );
+    initFunction();
   }
 }
 </script>
