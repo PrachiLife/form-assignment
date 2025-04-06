@@ -1,6 +1,5 @@
 <template>
   <form @submit.prevent="submitForm" class="form-container">
-    {{formValues}}
     <component
       v-for="(field, key) in visibleFields"
       :key="key"
